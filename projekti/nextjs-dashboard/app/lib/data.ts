@@ -8,6 +8,7 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { notFound } from 'next/navigation'; // Add this import at the top
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -159,6 +160,10 @@ export async function fetchInvoiceById(id: string) {
       // Convert amount from cents to dollars
       amount: invoice.amount / 100,
     }));
+
+    if (!invoice[0]) {
+      notFound(); // Show 404 page if invoice not found
+    }
 
     return invoice[0];
   } catch (error) {
